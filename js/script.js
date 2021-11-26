@@ -155,6 +155,34 @@ window.addEventListener("DOMContentLoaded", () => {
     window.addEventListener('scroll', showModalByScroll);
 });
 
+class NewBox {
+    constructor(title, bacground, box, text, price, cont ) {
+        this.title = title;
+        this.bacground = bacground;
+        this.box = box;
+        this.text = text;
+        this.price = price;
+        this.cont = cont;
+    }
+
+    addText () {
+        const container = document.querySelector(this.cont);
+        container.innerHTML +=  
+        `<div class="menu__item">
+            <img src=${this.bacground} alt=${box}>
+            <h3 class="menu__item-subtitle">${this.title}</h3>
+            <div class="menu__item-descr">${this.text}</div>
+            <div class="menu__item-divider"></div>
+                <div class="menu__item-price"><div class="menu__item-cost">Цена:</div>
+                <div class="menu__item-total"><span>${this.price}</span> грн/день</div>
+            </div>
+         </div>`;
+         console.log(container);
+    }
+    
+}
+const menu = new NewBox('Меню "Фитнес"', 'img/tabs/vegy.jpg', 'vegy', 'Меню "Фитнес" - это новый подход к приготовлению блюд: больше свежих овощей и фруктов. Продукт активных и здоровых людей. Это абсолютно новый продукт с оптимальной ценой и высоким качеством!', '229', '.menu__field .container');
+menu.addText();
 
 
 
