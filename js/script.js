@@ -157,12 +157,13 @@ window.addEventListener("DOMContentLoaded", () => {
 
 
     class NewBox {
-        constructor(title, bacground, box, text, price, cont, transfer ) {
+        constructor(title, bacground, box, text, price, cont, transfer, ...classes) {
             this.title = title;
             this.bacground = bacground;
             this.box = box;
             this.text = text;
             this.price = price;
+            this.classes = classes;
             this.cont = cont;
             this.transfer = 27;
             this.changeToUAH();
@@ -175,17 +176,26 @@ window.addEventListener("DOMContentLoaded", () => {
 
         addText () {
             const container = document.querySelector(this.cont),
-                  menuFilde = document.createElement('div');  
+            menuFilde = document.createElement('div');
+
+            if (this.classes.length === 0) {
+                this.element = 'menu__item';
+                menuFilde.classList.add(this.element);
+            } else {
+                this.classes.forEach(className => menuFilde.classList.add(className));
+            }
+             
             menuFilde.innerHTML +=  
-            `<div class="menu__item">
-                <img src=${this.bacground} alt=${this.box}>
+            `   <img src=${this.bacground} alt=${this.box}>
                 <h3 class="menu__item-subtitle">${this.title}</h3>
                 <div class="menu__item-descr">${this.text}</div>
                 <div class="menu__item-divider"></div>
-                    <div class="menu__item-price"><div class="menu__item-cost">Цена:</div>
+                <div class="menu__item-price">
+                    <div class="menu__item-cost">Цена:</div>
                     <div class="menu__item-total"><span>${this.price}</span> грн/день</div>
                 </div>
-             </div>`;
+            `;
+             
              container.append(menuFilde);
         }
         
