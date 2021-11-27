@@ -153,36 +153,71 @@ window.addEventListener("DOMContentLoaded", () => {
     }
 
     window.addEventListener('scroll', showModalByScroll);
-});
 
-class NewBox {
-    constructor(title, bacground, box, text, price, cont ) {
-        this.title = title;
-        this.bacground = bacground;
-        this.box = box;
-        this.text = text;
-        this.price = price;
-        this.cont = cont;
-    }
 
-    addText () {
-        const container = document.querySelector(this.cont);
-        container.innerHTML +=  
-        `<div class="menu__item">
-            <img src=${this.bacground} alt=${box}>
-            <h3 class="menu__item-subtitle">${this.title}</h3>
-            <div class="menu__item-descr">${this.text}</div>
-            <div class="menu__item-divider"></div>
-                <div class="menu__item-price"><div class="menu__item-cost">Цена:</div>
-                <div class="menu__item-total"><span>${this.price}</span> грн/день</div>
-            </div>
-         </div>`;
-         console.log(container);
-    }
+
+    class NewBox {
+        constructor(title, bacground, box, text, price, cont, transfer ) {
+            this.title = title;
+            this.bacground = bacground;
+            this.box = box;
+            this.text = text;
+            this.price = price;
+            this.cont = cont;
+            this.transfer = 27;
+            this.changeToUAH();
+        }
     
-}
-const menu = new NewBox('Меню "Фитнес"', 'img/tabs/vegy.jpg', 'vegy', 'Меню "Фитнес" - это новый подход к приготовлению блюд: больше свежих овощей и фруктов. Продукт активных и здоровых людей. Это абсолютно новый продукт с оптимальной ценой и высоким качеством!', '229', '.menu__field .container');
-menu.addText();
+        //из гривен в доллары
+        changeToUAH() {
+            this.price = this.price * this.transfer;
+        }
+
+        addText () {
+            const container = document.querySelector(this.cont),
+                  menuFilde = document.createElement('div');  
+            menuFilde.innerHTML +=  
+            `<div class="menu__item">
+                <img src=${this.bacground} alt=${this.box}>
+                <h3 class="menu__item-subtitle">${this.title}</h3>
+                <div class="menu__item-descr">${this.text}</div>
+                <div class="menu__item-divider"></div>
+                    <div class="menu__item-price"><div class="menu__item-cost">Цена:</div>
+                    <div class="menu__item-total"><span>${this.price}</span> грн/день</div>
+                </div>
+             </div>`;
+             container.append(menuFilde);
+        }
+        
+    }
+    new NewBox(
+        'Меню "Фитнес"',
+        'img/tabs/vegy.jpg',
+        'vegy',
+        'Меню "Фитнес" - это новый подход к приготовлению блюд: больше свежих овощей и фруктов. Продукт активных и здоровых людей. Это абсолютно новый продукт с оптимальной ценой и высоким качеством!',
+        '9',
+         '.menu__field .container'
+        ).addText();
+
+    new NewBox(
+        'Меню “Премиум”',
+        'img/tabs/elite.jpg',
+        'elite',
+        'В меню “Премиум” мы используем не только красивый дизайн упаковки, но и качественное исполнение блюд. Красная рыба, морепродукты, фрукты - ресторанное меню без похода в ресторан!',
+        '14',
+            '.menu__field .container'
+        ).addText();
+        
+    new NewBox(
+        'Меню "Постное"',
+        'img/tabs/post.jpg',
+        'post',
+        'Меню “Постное” - это тщательный подбор ингредиентов: полное отсутствие продуктов животного происхождения, молоко из миндаля, овса, кокоса или гречки, правильное количество белков за счет тофу и импортных вегетарианских стейков.',
+        '21',
+            '.menu__field .container'
+        ).addText();
+    
+});
 
 
 
