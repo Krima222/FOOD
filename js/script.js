@@ -198,36 +198,23 @@ window.addEventListener("DOMContentLoaded", () => {
              
              container.append(menuFilde);
         }
-        
     }
-    new NewBox(
-        'Меню "Фитнес"',
-        'img/tabs/vegy.jpg',
-        'vegy',
-        'Меню "Фитнес" - это новый подход к приготовлению блюд: больше свежих овощей и фруктов. Продукт активных и здоровых людей. Это абсолютно новый продукт с оптимальной ценой и высоким качеством!',
-        '9',
-         '.menu__field .container'
-        ).addText();
 
-    new NewBox(
-        'Меню “Премиум”',
-        'img/tabs/elite.jpg',
-        'elite',
-        'В меню “Премиум” мы используем не только красивый дизайн упаковки, но и качественное исполнение блюд. Красная рыба, морепродукты, фрукты - ресторанное меню без похода в ресторан!',
-        '14',
-            '.menu__field .container'
-        ).addText();
-        
-    new NewBox(
-        'Меню "Постное"',
-        'img/tabs/post.jpg',
-        'post',
-        'Меню “Постное” - это тщательный подбор ингредиентов: полное отсутствие продуктов животного происхождения, молоко из миндаля, овса, кокоса или гречки, правильное количество белков за счет тофу и импортных вегетарианских стейков.',
-        '21',
-            '.menu__field .container'
-        ).addText();
+    const getResource = async (url) => {
+        const res = await fetch(url);
 
+        if(!res.ok) {
+            throw new Error(`Could not fetch ${url}, status: ${res.status}`);
+        }
+        return await res.json();
+    }; 
 
+    getResource('http://localhost:3000/menu')
+        .then(data => {
+            data.forEach(({title, img, altimg, descr, price}) => {
+                new NewBox(title, img, altimg, descr, price, '.menu .container').addText();
+            });
+        });
 
     //Forms
     const forms = document.querySelectorAll('form');
@@ -239,10 +226,26 @@ window.addEventListener("DOMContentLoaded", () => {
     };
 
     forms.forEach(item => {
-        postData(item);
+        bindDostData(item);
     });
 
-    function postData(form) {
+//запускается фун-ия postData, 
+//делаем запрос на сервер  
+//даелаем синхронный код async, ставится перед функцией 
+//await-ставим перед опирациями,которые необходимо дождаться,(дожидается результата этого запроса)
+//возвращаем ответ в формате джейсон
+    const postData = async (url, data) => {
+        const res = await fetch(url, {
+            method: 'POST',
+            headers: {
+                'Content-type': 'application/json'
+            },
+            body: data
+        });
+
+        return await res.json();
+    };
+    function bindDostData(form) {
         //срабатывает каждый раз, когда хотим отправить какую-то форму
         form.addEventListener('submit', (e) => {
             //чтобы отменить стандартное поведение браузера
@@ -258,18 +261,9 @@ window.addEventListener("DOMContentLoaded", () => {
             
             const formData = new FormData(form);
 
-            const object = {};
-            formData.forEach(function(value, key){
-                object[key] = value;
-            });
+            const json =JSON.stringify(Object.fromEntries(formData.entries()));
 
-            fetch('server.php', {
-                method: 'POST',
-                headers: {
-                    'Content-type': 'application/json'
-                },
-                body: JSON.stringify(object)
-            }).then(data => data.text())
+            postData(' http://localhost:3000/requests', json)
             .then(data => {
                 console.log(data);
                 showThanksModal(message.success);
@@ -307,9 +301,60 @@ window.addEventListener("DOMContentLoaded", () => {
         }, 4000);
     }
 
-    fetch('http://localhost:3000/menu')
-        .then(data => data.json())
-        .then(res => console.log(res));
+
+
+    //переключение слайдов
+
+    const offerSliderPrev = document.querySelector('.offer__slider-prev'),
+        offerSliderNext = document.querySelector('.offer__slider-next'),
+        currentNumber = document.querySelector('#current'),
+        allNumber = document.querySelector('#total'),
+        slides = document.querySelectorAll('.offer__slide');
+ 
+        let currentIndex = 1;
+
+        offerSliderPrev.addEventListener('click', () => {
+            if (currentIndex > 1) {
+                currentIndex --;
+            } else (currentIndex = slides.length);
+            hideSlide();
+            showSlide();
+            currentNumber.textContent = correctNumber(currentIndex);
+            allNumber.textContent = correctNumber(slides.length);
+        });
+
+        offerSliderNext.addEventListener('click', () => {
+            if (currentIndex < slides.length) {
+                currentIndex ++;
+            } else (currentIndex = 1);
+            console.log(currentIndex);
+            hideSlide();
+            showSlide();
+            currentNumber.textContent = correctNumber(currentIndex);
+            allNumber.textContent = correctNumber(slides.length);
+        });
+
+        function showSlide() {
+            slides[currentIndex - 1].style.display = 'block';
+        }
+
+        function hideSlide() {
+            slides.forEach(item => {
+                item.style.display = 'none';
+            });
+        }
+        hideSlide();
+        showSlide();
+
+        currentNumber.textContent = correctNumber(currentIndex);
+        allNumber.textContent = correctNumber(slides.length);
+
+        function correctNumber(number) {
+            if (number < 10) {
+                number = `0${number}`;
+                return number;
+            }
+        }
 
 });
 
